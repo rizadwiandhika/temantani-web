@@ -1,17 +1,74 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import { withScrollToTop as withScrollTop, withAuth } from "./hoc";
+import { instantiate } from "./util";
+import * as Page from "./pages";
+
+import "./index.css";
+
+const queryClient = new QueryClient();
+const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: instantiate(withScrollTop(Page.Auth.LoginPage)),
+  },
+  {
+    path: "/register",
+    element: instantiate(withScrollTop(Page.Auth.RegisterPage)),
+  },
+  {
+    path: "/",
+    element: instantiate(withAuth(withScrollTop(Page.HomePage))),
+  },
+  {
+    path: "/admin/register",
+    element: instantiate(withAuth(withScrollTop(Page.User.RegisterAdminPage))),
+  },
+  {
+    path: "/profile",
+    element: instantiate(withAuth(withScrollTop(Page.User.ProfilePage))),
+  },
+  {
+    path: "/role",
+    element: instantiate(withAuth(withScrollTop(Page.User.ActivateRolePage))),
+  },
+  {
+    path: "/fundraisings",
+    element: instantiate(
+      withAuth(withScrollTop(Page.Investment.ListFundraisingPage)),
+    ),
+  },
+  {
+    path: "/fundraisings/:id",
+    element: instantiate(
+      withAuth(withScrollTop(Page.Investment.DetailFundraisingPage)),
+    ),
+  },
+  {
+    path: "/investments",
+    element: instantiate(
+      withAuth(withScrollTop(Page.Investment.ListInvestmentPage)),
+    ),
+  },
+  {
+    path: "/investments/:id",
+    element: instantiate(
+      withAuth(withScrollTop(Page.Investment.DetailInvestmentPage)),
+    ),
+  },
+]);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  // <React.StrictMode>
+  //   <QueryClientProvider client={queryClient}>
+  //     <RouterProvider router={router} />
+  //   </QueryClientProvider>
+  // </React.StrictMode>,
+  <QueryClientProvider client={queryClient}>
+    <RouterProvider router={router} />
+  </QueryClientProvider>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
