@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { token } from "../../util";
 import { investmentAPI } from "../../api";
 import { useFetch } from "../../hooks";
-import { Navbar, InvestmentCard, ArticleContent } from "../../components";
+import { InvestmentCard, ArticleContent } from "../../components";
 
 export function ListInvestmentPage() {
   const investmentQuery = useFetch();
@@ -13,7 +13,6 @@ export function ListInvestmentPage() {
 
   return (
     <>
-      <Navbar />
       <ArticleContent title="My Investments">
         <div className="flex flex-col gap-4">
           {investmentQuery.success &&

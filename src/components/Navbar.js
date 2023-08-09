@@ -2,19 +2,55 @@ import { Fragment, useCallback } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useHref, matchPath, Link, useNavigate } from "react-router-dom";
-import { classNames } from "../util";
+import { classNames, token, isAdmin } from "../util";
 
-const navigation = [
+const INVESTOR = "INVESTOR";
+const LANDOWNER = "LANDOWNER";
+const ADMIN_LANDOWNER = "ADMIN_LANDOWNER";
+const ADMIN_PROJECT = "ADMIN_PROJECT";
+const ADMIN_SUPER = "ADMIN_SUPER";
+
+const navigationRoutes = [
   {
+    authorization: [INVESTOR],
     name: "Fundraising",
     href: "/fundraisings",
     pattern: "/fundraisings/*",
     current: false,
   },
   {
+    authorization: [INVESTOR],
     name: "Investment",
     href: "/investments",
     pattern: "/investments/*",
+    current: false,
+  },
+  {
+    authorization: [LANDOWNER],
+    name: "Land",
+    href: "/lands",
+    pattern: "/lands/*",
+    current: false,
+  },
+  {
+    authorization: [ADMIN_SUPER, ADMIN_LANDOWNER, ADMIN_PROJECT],
+    name: "Land",
+    href: "/admin/lands",
+    pattern: "/admin/lands/*",
+    current: false,
+  },
+  {
+    authorization: [ADMIN_SUPER, ADMIN_PROJECT],
+    name: "Project",
+    href: "/admin/projects",
+    pattern: "/admin/projects/*",
+    current: false,
+  },
+  {
+    authorization: [ADMIN_SUPER],
+    name: "Register admin",
+    href: "/admin/register",
+    pattern: "/admin/register/*",
     current: false,
   },
 ];
@@ -27,10 +63,15 @@ export default function Navbar() {
     localStorage.removeItem("token");
     navigate("/login");
   }, [navigate]);
-
-  navigation.forEach((nav) => {
-    nav.current = matchPath(nav.pattern, href);
-  });
+  const roles = token.getRoles();
+  const navigation = navigationRoutes
+    .filter((nav) => {
+      return roles.some((role) => nav.authorization.includes(role));
+    })
+    .map((nav) => {
+      nav.current = matchPath(nav.pattern, href);
+      return nav;
+    });
 
   return (
     <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50">
@@ -51,16 +92,20 @@ export default function Navbar() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    className="block h-8 w-auto lg:hidden"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
-                  <img
-                    className="hidden h-8 w-auto lg:block"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
+                  <Link to="/">
+                    <img
+                      className="block h-8 w-auto lg:hidden"
+                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                      alt="Your Company"
+                    />
+                  </Link>
+                  <Link to="/">
+                    <img
+                      className="hidden h-8 w-auto lg:block"
+                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                      alt="Your Company"
+                    />
+                  </Link>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -113,34 +158,38 @@ export default function Navbar() {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <Link
-                            key="/profile"
-                            to="/profile"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700",
+                      {!isAdmin(roles) && (
+                        <>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <Link
+                                key="/profile"
+                                to="/profile"
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700",
+                                )}
+                              >
+                                Your profile
+                              </Link>
                             )}
-                          >
-                            Your Profile
-                          </Link>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <Link
-                            key="/role"
-                            to="/role"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700",
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <Link
+                                key="/role"
+                                to="/role"
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700",
+                                )}
+                              >
+                                Role activation
+                              </Link>
                             )}
-                          >
-                            Role Activation
-                          </Link>
-                        )}
-                      </Menu.Item>
+                          </Menu.Item>
+                        </>
+                      )}
                       <Menu.Item>
                         {({ active }) => (
                           <button
@@ -153,15 +202,6 @@ export default function Navbar() {
                           >
                             Sign out
                           </button>
-                          // <Link
-                          //   // to="/login"
-                          //   className={classNames(
-                          //     active ? "bg-gray-100" : "",
-                          //     "block px-4 py-2 text-sm text-gray-700",
-                          //   )}
-                          // >
-                          //   Sign out
-                          // </Link>
                         )}
                       </Menu.Item>
                     </Menu.Items>

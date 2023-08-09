@@ -1,27 +1,26 @@
-import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { token as tokenStorage, roles } from "../util";
 
-import { Navbar, Banner } from "../components";
-import { useBanner } from "../hooks";
+const {
+  ADMIN_SUPER,
+  ADMIN_LANDOWNER,
+  ADMIN_PROJECT,
+  BUYER,
+  INVESTOR,
+  LANDOWNER,
+  WORKER,
+} = roles;
 
+const redirectMap = {
+  [ADMIN_SUPER]: "/admin/register",
+  [ADMIN_LANDOWNER]: "/admin/lands",
+  [ADMIN_PROJECT]: "/admin/projects",
+  [BUYER]: "/profile",
+  [INVESTOR]: "/fundraisings",
+  [LANDOWNER]: "/lands",
+  [WORKER]: "/profile",
+};
 export function HomePage() {
-  const banner = useBanner();
-
-  useEffect(() => {
-    setTimeout(() => {
-      banner.show("Welcome!");
-    }, 1500);
-  }, [banner]);
-
-  return (
-    <>
-      <Navbar />
-
-      <Banner
-        message={banner.message}
-        visible={banner.visibility}
-        onCloseClicked={banner.hide}
-      />
-      <div className="max-w-3xl mx-auto mt-8">Home Page</div>
-    </>
-  );
+  const [role, role2] = tokenStorage.getRoles();
+  return <Navigate to={redirectMap[role2 || role]} />;
 }

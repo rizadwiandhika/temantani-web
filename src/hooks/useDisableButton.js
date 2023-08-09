@@ -2,34 +2,58 @@ import { useState, useCallback, useMemo } from "react";
 
 export function useDisableButton(
   enabledText = "",
-  disabledText = "",
+  disabledText = enabledText,
   isDisableStatus = false,
 ) {
+  const [enabledTextState, setEnabledTextState] = useState(enabledText);
+  const [disabledTextState, setDisabledTextState] = useState(disabledText);
   const [disableStatus, setDisableStatus] = useState(isDisableStatus);
-  const [text, setText] = useState(enabledText);
+  const [text, setText] = useState(
+    isDisableStatus ? disabledText : enabledText,
+  );
 
   const disable = useCallback(() => {
-    setText(disabledText);
+    setText(disabledTextState);
     setDisableStatus(true);
-  }, [disabledText]);
+  }, [disabledTextState]);
 
   const disableWithoutChangeText = useCallback(() => {
     setDisableStatus(true);
   }, []);
 
-  const enable = useCallback(() => {
-    setText(enabledText);
-    setDisableStatus(false);
-  }, [enabledText]);
-
-  return useMemo(
-    () => ({
-      text,
-      status: disableStatus,
-      disable,
-      enable,
-      disableWithoutChangeText,
-    }),
-    [disable, enable, disableStatus, text, disableWithoutChangeText],
+  const update = useCallback(
+    ({ enableText = "", disabledText = "", disabled = false }) => {
+      setEnabledTextState(enableText);
+      setDisabledTextState(disabledText);
+      setDisableStatus(disabled);
+      setText(disabled ? disabledText : enableText);
+    },
+    [],
   );
+
+  const enable = useCallback(() => {
+    setText(enabledTextState);
+    setDisableStatus(false);
+  }, [enabledTextState]);
+
+  const button = useMemo(
+    () => ({
+      text: "",
+      status: false,
+      disable: () => {},
+      enable: () => {},
+      disableWithoutChangeText: () => {},
+      update: ({ enableText = "", disabledText = "", disabled = false }) => {},
+    }),
+    [],
+  );
+
+  button.text = text;
+  button.status = disableStatus;
+  button.disable = disable;
+  button.enable = enable;
+  button.disableWithoutChangeText = disableWithoutChangeText;
+  button.update = update;
+
+  return button;
 }

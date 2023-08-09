@@ -4,7 +4,6 @@ import { classNames, token } from "../../util";
 import { investmentAPI } from "../../api";
 import { useBanner, useDisableButton, useFetch } from "../../hooks";
 import {
-  Navbar,
   ArticleContent,
   InvestmentCard,
   SectionContent,
@@ -74,7 +73,6 @@ export function DetailInvestmentPage() {
 
   return (
     <>
-      <Navbar />
       <Banner
         visible={banner.visibility}
         message={banner.message}

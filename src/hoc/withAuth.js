@@ -1,10 +1,20 @@
 import { Navigate } from "react-router-dom";
-import { token } from "../util";
+import { ErrorView } from "../pages";
+import { token as tokenStorage } from "../util";
 
-export function withAuth(Component) {
+export function withAuth(Component, ...roles) {
   return (props) => {
-    const jwt = token.get();
-    if (!jwt) return <Navigate to="/login" replace />;
+    const token = tokenStorage.get();
+    const userRoles = tokenStorage.getRoles();
+    if (!token) {
+      return <Navigate to="/login" replace />;
+    }
+    if (
+      roles.length > 0 &&
+      !userRoles.some((userRole) => roles.includes(userRole))
+    ) {
+      return <ErrorView.NotFoundPage />;
+    }
 
     return <Component {...props} />;
   };

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { userAPI } from "../../api";
 import { Banner, Form, Navbar } from "../../components";
-import { useBanner, useDisableButton } from "../../hooks";
-import { getValueThen, classNames } from "../../util";
+import { useBanner, useDisableButton, useFetch } from "../../hooks";
+import { getValueThen, classNames, token } from "../../util";
 
 const ADMIN_ROLE_OPTS = [
   { value: "ADMIN_LANDOWNER", display: "Admin of Land" },
@@ -12,8 +13,9 @@ const ADMIN_ROLE_OPTS = [
 export function RegisterAdminPage() {
   const registerButton = useDisableButton("Create new admin", "Creating...");
   const banner = useBanner();
+  const registerMutation = useFetch();
 
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("ADMIN_LANDOWNER");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -29,17 +31,34 @@ export function RegisterAdminPage() {
       name,
       password,
       phoneNumber: phone,
+      role,
     };
 
-    console.log(payload);
-
-    setTimeout(() => {
-      registerButton.enable();
-      Math.random() > 0.5
-        ? banner.show("Admin was registered successfully")
-        : banner.show("Failed registering admin...");
-    }, 1000);
+    const jwt = token.get();
+    registerMutation.trigger(() => userAPI.registerAdmin(jwt, payload));
   };
+
+  useEffect(() => {
+    if (registerMutation.loading) {
+      return;
+    }
+    registerButton.enable();
+    if (registerMutation.error.happened) {
+      banner.show(registerMutation.error.message);
+      return;
+    }
+    if (registerMutation.success) {
+      banner.show("Admin was successfully registered.");
+      return;
+    }
+  }, [
+    banner,
+    registerButton,
+    registerMutation.error.happened,
+    registerMutation.error.message,
+    registerMutation.loading,
+    registerMutation.success,
+  ]);
 
   return (
     <>

@@ -21,18 +21,26 @@ export function InvestmentCard({
     <div className="p-4 px-8 border border-gray-300 rounded flex text-sm">
       <div className="w-4/5 flex flex-col gap-2">
         <p className="font-semibold">Investment {investmentId}</p>
-        <p className="text-gray-600">Created for project: {projectId}</p>
+        <p className="text-gray-600">
+          Created for project:{" "}
+          <Link
+            className="hover:cursor-pointer underline hover:text-indigo-600"
+            to={`/projects/${projectId}`}
+          >
+            {projectId}
+          </Link>
+        </p>
         <p className="text-gray-600">{date.toDateString()}</p>
         {!hideLink && (
           <p>
-            <Link to={`/Investments/${investmentId}`} className="underline">
+            <Link to={`/investments/${investmentId}`} className="underline">
               Details
             </Link>
           </p>
         )}
       </div>
       <div className="w-1/5 flex flex-col gap-2 items-end">
-        <p className="font-semibold w-fit">Rp {amount.toLocaleString()}</p>
+        <p className="font-semibold w-fit">Rp{amount.toLocaleString()}</p>
         <p
           className={classNames(
             "p-1 px-2 rounded w-fit font-semibold",

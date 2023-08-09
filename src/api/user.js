@@ -1,3 +1,5 @@
+import { resolveFetch, jsonRequest } from "../util";
+
 const registerPayload = {
   email: "",
   name: "",
@@ -147,4 +149,12 @@ export async function activateRole(
   }
 
   return data;
+}
+
+export async function registerAdmin(
+  token = "",
+  body = { email: "", password: "", name: "", phoneNumber: "", role: "" },
+) {
+  const url = `${host}/admins`;
+  return resolveFetch(jsonRequest.post(url, { token, body }));
 }

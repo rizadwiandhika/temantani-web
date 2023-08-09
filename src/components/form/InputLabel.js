@@ -3,11 +3,12 @@ import { classNames } from "../../util";
 
 export default function InputLabel({
   id = "",
-  label = "Label",
+  label = "",
   type = "text",
   placeholder = "value",
   value = "",
-  onChange = () => {},
+  onChange = (e) => {},
+  onValueChange = (val) => {},
   required = false,
   readOnly = false,
 }) {
@@ -15,9 +16,11 @@ export default function InputLabel({
   id = id || defaultId;
   return (
     <div>
-      <label htmlFor={id} className="block text-sm leading-6 text-gray-500">
-        {label}
-      </label>
+      {label !== "" && (
+        <label htmlFor={id} className="block text-sm leading-6 text-gray-500">
+          {label}
+        </label>
+      )}
       <div className="mt-2">
         <input
           id={id}

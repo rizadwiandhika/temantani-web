@@ -1,4 +1,7 @@
 export function decodeJwtPayload(token) {
+  if (!token) {
+    return {};
+  }
   const base64UrlPayload = token.split(".")[1]; // Extract the payload part of the JWT
   const base64Payload = base64UrlPayload.replace(/-/g, "+").replace(/_/g, "/"); // Replace URL-safe characters
   const jsonPayload = decodeURIComponent(

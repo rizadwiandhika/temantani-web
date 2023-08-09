@@ -28,7 +28,8 @@ export function LoginPage() {
 
     if (loginReq.success) {
       token.set(loginReq.data?.token);
-      navigate("/profile");
+      navigate("/");
+
       return;
     }
   }, [

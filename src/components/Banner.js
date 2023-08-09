@@ -10,8 +10,10 @@ export default function Banner({
   if (typeof message !== "string") {
     message = "";
   }
-  if (message.length > 48) {
-    message = message.slice(0, 48) + "...";
+  const MAX_CHARACTERS = 72;
+
+  if (message.length > MAX_CHARACTERS) {
+    message = message.slice(0, MAX_CHARACTERS) + "...";
   }
 
   return (

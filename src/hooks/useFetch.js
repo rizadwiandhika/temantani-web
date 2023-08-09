@@ -14,7 +14,7 @@ export function useFetch() {
   useEffect(() => {
     process[id] = true;
     return () => {
-      console.log("cleaning up useFetch for:", id);
+      // console.log("cleaning up useFetch for:", id);
       process[id] = false;
     };
   }, [id]);
@@ -26,7 +26,7 @@ export function useFetch() {
       error: errorSchema,
       success: false,
       trigger: async (fetcher = async () => {}) => {
-        console.log("triggering...");
+        // console.log("triggering...");
         setLoading(true);
         setError(errorSchema);
 
@@ -38,21 +38,37 @@ export function useFetch() {
             return;
           }
 
-          console.log(typeof data, data);
+          // console.log(typeof data, data);
           setData(data);
           setSuccess(true);
         } catch (error) {
           if (!process[id]) {
-            console.log("preventing rerendering updating...");
+            // console.log("preventing rerendering updating...");
             delete process[id];
             return;
           }
+          console.log(error);
           setError({ happened: true, message: error.message, cause: error });
           setSuccess(false);
           setData(null);
         } finally {
           setLoading(false);
         }
+      },
+      triggerSilently: async (fetcher = async () => {}) => {
+        // console.log("triggering silently...");
+
+        try {
+          const data = await fetcher();
+          if (!process[id]) {
+            // console.log("preventing rerendering updating...");
+            delete process[id];
+            return;
+          }
+
+          // console.log(typeof data, data);
+          setData(data);
+        } catch (error) {}
       },
     }),
     [id],

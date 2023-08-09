@@ -1,13 +1,10 @@
 import { useEffect } from "react";
 
-import {
-  Navbar,
-  Banner,
-  FundraisingCard,
-  ArticleContent,
-} from "../../components";
+import { Banner, FundraisingCard, ArticleContent } from "../../components";
 import { useBanner, useFetch } from "../../hooks";
 import { investmentAPI } from "../../api";
+
+import fundraisingImg from "../../assets/img/fundraising.png";
 
 export function ListFundraisingPage() {
   const banner = useBanner();
@@ -19,7 +16,6 @@ export function ListFundraisingPage() {
 
   return (
     <>
-      <Navbar />
       <Banner
         message={banner.message}
         visible={banner.visibility}
@@ -40,6 +36,7 @@ export function ListFundraisingPage() {
                 collectedFunds={f.bookedFunds}
                 targetFunds={f.fundraisingTarget}
                 deadline={new Date(f.tenorDeadline)}
+                picture={fundraisingImg}
               />
             ))
           ) : null}

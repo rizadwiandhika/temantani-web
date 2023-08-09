@@ -123,7 +123,7 @@ export function ProfilePage() {
         onCloseClicked={banner.hide}
       />
       <main className="w-11/12 max-w-lg mx-auto my-8">
-        <PictureName />
+        <PictureName name={profile.name} />
         <div className="flex justify-end">
           <button
             className={classNames(

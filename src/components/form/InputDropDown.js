@@ -1,5 +1,16 @@
 import React, { useId } from "react";
 
+/**
+ * Renders an input drop-down component.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The ID attribute of the input drop-down.
+ * @param {string} props.label - The label text for the input drop-down.
+ * @param {Array<Record<'value'|'display', string>>} props.options - The array of options for the drop-down.
+ * @param {string} props.value - The currently selected value of the drop-down.
+ * @param {(e: React.MouseEvent<HTMLElement>) => void} props.onChange - The function to handle the change event of the drop-down.
+ * @returns {JSX.Element} The input drop-down component.
+ */
 export function InputDropDown({
   id = "",
   label = "Label",
@@ -8,7 +19,7 @@ export function InputDropDown({
     { value: "opt 2", display: "Option 2" },
   ],
   value = "",
-  onChange = () => {},
+  onChange = (e) => {},
 }) {
   const defaultId = useId();
   id = id || defaultId;

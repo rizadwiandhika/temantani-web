@@ -1,11 +1,5 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
-import {
-  Navbar,
-  Banner,
-  PictureName,
-  SectionContent,
-  Form,
-} from "../../components";
+import React, { useState, useEffect } from "react";
+import { Banner, PictureName, SectionContent, Form } from "../../components";
 import { useBanner, useDisableButton, useFetch } from "../../hooks";
 import { getValueThen, classNames, token } from "../../util";
 import { userAPI } from "../../api";
@@ -89,19 +83,20 @@ export function ActivateRolePage() {
 
     if (activateRoleFetch.success) {
       banner.show("Role activated successfully");
+      token.set(activateRoleFetch.data.token);
     }
   }, [
     activateRoleFetch.error.happened,
     activateRoleFetch.error.message,
     activateRoleFetch.loading,
     activateRoleFetch.success,
+    activateRoleFetch.data?.token,
     banner,
     button,
   ]);
 
   return (
     <>
-      <Navbar />
       <Banner
         visible={banner.visibility}
         message={banner.message}

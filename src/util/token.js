@@ -13,6 +13,12 @@ export function get() {
   return jwt;
 }
 
+export function getRoles() {
+  const jwt = get();
+  const { roles = [] } = decodeJwtPayload(jwt);
+  return roles;
+}
+
 export function set(token = "") {
   const { exp } = decodeJwtPayload(token);
   localStorage.setItem("token", JSON.stringify({ jwt: token, exp }));
